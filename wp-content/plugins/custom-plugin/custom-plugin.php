@@ -48,6 +48,10 @@ class CustomPlugin{
         flush_rewrite_rules();
     }
 
+    static function uninstall(){
+
+    }
+
     function custom_post_type(){
         register_post_type('book', ['public'=>true, 'label'=>'Books']);
     }
@@ -62,3 +66,6 @@ register_activation_hook(__FILE__, array($customPluginInstance, 'activate'));
 
 //deactivate
 register_deactivation_hook(__FILE__, array($customPluginInstance, 'deactivate'));
+
+//
+// register_uninstall_hook(__FILE__, array($customPluginInstance, 'uninstall'));
