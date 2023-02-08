@@ -1,0 +1,16 @@
+html, body{
+    margin:0;
+    background-color: whitesmoke;
+    padding-left: 10px;
+    color: black;
+}
+
+ul{
+    display: flex;
+    list-style-type: none;
+    gap:30px;
+    
+}
+li a{
+    text-decoration: none;
+}
