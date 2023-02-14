@@ -27,17 +27,7 @@ class BookReg{
         $this->pass_data_to_db();   
     }
 
-    function activate(){
-        $this->create_table_to_db();
-        flush_rewrite_rules();
-    }
-
-    function deactivate(){
-        // flush rewrite rules
-        flush_rewrite_rules();
-    }
-
-    function create_table_to_db(){
+    static function create_table_to_db(){
         global $wpdb;
 
         $table_name = $wpdb->prefix.'books';
@@ -73,17 +63,44 @@ class BookReg{
             }
         }
     }
+
+    public static function staticMethod(){
+        echo 'This is a static method';
+        BookReg::displayText();
+    }
+
+    static function displayText(){
+        echo 'This displays Text';
+    }
+
+    function activateExternally(){
+        require_once plugin_dir_path(__FILE__). 'inc/book-registration-activate.php';
+        BookRegActivate::activate();
+    }
+
+    function deactivateExternally(){
+        require_once plugin_dir_path(__FILE__). 'inc/book-registration-deactivate.php';
+        BookRegDectivate::deactivate();
+    }
 }
 
 if (class_exists('BookReg')){
     $bookRegInstance = new BookReg();
+    // BookReg::activateExternally();
 }
 
 //activation
-register_activation_hook(__FILE__, array($bookRegInstance, 'activate'));
+$bookRegInstance->activateExternally();
+// register_activation_hook(__FILE__, array($bookRegInstance,'activateExternally'));
+// register_activation_hook(__FILE__, array($bookRegInstance, 'activate'));
+// require_once plugin_dir_path(__FILE__). 'inc/book-registration-activate.php';
+// register_activation_hook(__FILE__, array('BookRegActivate', 'activate'));
 
 //deactivate
-register_deactivation_hook(__FILE__, array($bookRegInstance, 'deactivate'));
+$bookRegInstance->deactivateExternally();
+// register_deactivation_hook(__FILE__, array($bookRegInstance, 'deactivate'));
+// require_once plugin_dir_path(__FILE__). 'inc/book-registration-deactivate.php';
+// register_deactivation_hook(__FILE__, array('BookRegDectivate','deactivate'));
 
 //
 // register_uninstall_hook(__FILE__, array($bookRegInstance, 'uninstall'));
