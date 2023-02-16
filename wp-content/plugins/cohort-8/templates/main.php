@@ -1,0 +1,1 @@
+<h1>This is Cohort 8 plugin</h1>

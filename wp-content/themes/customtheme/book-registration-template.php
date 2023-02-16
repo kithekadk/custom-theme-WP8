@@ -6,7 +6,7 @@
  get_header();?>
 
  <div class="row justify-content-center">
-    <form action="" method="post" style="width:40vw; box-shadow:3px 3px 3px 3px grey; padding:30px;">
+    <form action="../search-books" method="post" style="width:40vw; box-shadow:3px 3px 3px 3px grey; padding:30px;">
         <div class="form-group">
             <input type="text" name="title" class="form-control input-sm mb-3" id="title" placeholder="Input Book Title" required>
         </div>
