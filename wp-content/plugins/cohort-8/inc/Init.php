@@ -10,7 +10,8 @@ class Init{
         return [
             Pages\Admin::class,
             Base\SettingsLinks::class,
-            Base\Enqueue::class
+            Base\Enqueue::class,
+            Base\C8Assessments::class
         ];
     }
 

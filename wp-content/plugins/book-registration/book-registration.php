@@ -64,6 +64,8 @@ class BookReg{
         }
     }
 
+    
+
     public static function staticMethod(){
         echo 'This is a static method';
         BookReg::displayText();
