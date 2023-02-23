@@ -1,0 +1,1 @@
+<h1>This is Admin Template 10</h1>

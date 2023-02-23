@@ -11,7 +11,10 @@ class Init{
             Pages\Admin::class,
             Base\SettingsLinks::class,
             Base\Enqueue::class,
-            Base\C8Assessments::class
+            Base\C8Assessments::class,
+            Base\MarksEntry::class,
+            Base\ShortCode::class,
+            Base\ExternalApi::class
         ];
     }
 

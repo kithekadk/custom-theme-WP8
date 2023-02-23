@@ -176,3 +176,16 @@ function custom_get_terms($postID, $term){
     return $output;
 
 }
+
+add_shortcode('cohort8', function($atts){
+    // echo 'This is cohort 8 shot code' ; 
+    // echo '<br/>';
+
+    $attributes = shortcode_atts([
+        'team_members'=>'Christine, Cripin, Jonah, Kennedy, Wilson',
+        'number_of_trainees'=>'5'
+    ], $atts);
+
+    return 'Team Members ='.$attributes['team_members']. ' and Number Of Trainees =' .$attributes['number_of_trainees'];
+
+});

@@ -22,6 +22,11 @@ class Admin{
         $this->callbacks= new AdminCallbacks();
         $this->setPages();
         $this->setSubpages();
+
+        $this->createSettings();
+        $this->createSections();
+        $this->createFields();
+
         $this->settings->AddPages($this->pages)->withSubpage()->addSubpages($this->subpages)->register();
 
         // add_action('admin_menu', array($this, 'add_admin_pages'));
@@ -85,14 +90,96 @@ class Admin{
                 'capability'=>'manage_options',
                 'menu_slug'=>'assessments',
                 'callback'=>array($this->callbacks,'Cohort8Assessments')
+            ),
+            array(
+                'parent_slug'=>'cohort_9',
+                'page_title'=>'Assessments',
+                'menu_title'=>'Assessments',
+                'capability'=>'manage_options',
+                'menu_slug'=>'assessments_9',
+                'callback'=>array($this->callbacks,'Cohort9Assessments')
+            ),
+            array(
+                'parent_slug'=>'cohort_9',
+                'page_title'=>'Members',
+                'menu_title'=>'Members',
+                'capability'=>'manage_options',
+                'menu_slug'=>'members_9',
+                'callback'=>array($this->callbacks,'Cohort9Members')
+            ),
+            array(
+                'parent_slug'=>'cohort_9',
+                'page_title'=>'Projects',
+                'menu_title'=>'Projects',
+                'capability'=>'manage_options',
+                'menu_slug'=>'projects_9',
+                'callback'=>array($this->callbacks,'Cohort9Projects')
+            ),
+            array(
+                'parent_slug'=>'cohort_10',
+                'page_title'=>'Mark Entry',
+                'menu_title'=>'Marks Entry',
+                'capability'=>'manage_options',
+                'menu_slug'=>'marks_entry',
+                'callback'=>array($this->callbacks,'Cohort10MarksEntry')
             )
             );
     }
-    // function add_admin_pages(){
-    //     add_menu_page('Cohort 8', 'Cohort 8', 'manage_options', 'cohort_8', array($this, 'admin_index'), 'dashicons-admin-site-alt', 111);
-    // }
+//    public function 
+    public function createSettings(){
+        $params =[
+            [
+                'option_group'=>'cohort_8_group',
+                'option_name'=>'cohort_8_example',
+                'callback'=> [$this->callbacks,'cohort8OptionsGroup']
+            ],
+            [
+                'option_group'=>'cohort_8_group',
+                'option_name'=>'second_name'
+            ]
+        ];
 
-    // function admin_index(){
-    //     require_once $this->plugin_path . 'templates/main.php';  
-    // }
+        $this->settings->setSettings($params);
+    }
+
+    public function createSections(){
+        $params = [
+            [
+                'id'=>'cohort_8_admin_index',
+                'title'=>'Members',
+                'callback'=>[$this->callbacks, 'cohort8AdminSection'],
+                'page'=>'cohort_8'
+            ]
+        ];
+        $this->settings->setSections($params);
+    }
+
+    public function createFields(){
+        $params = [
+            [
+                'id'=>'cohort_8_example',//get from createSettings
+                'title'=>'First Name',
+                'callback'=> [$this->callbacks, 'cohort8TextExample'],
+                'page'=>'cohort_8',//menu slug
+                'section'=>'cohort_8_admin_index', //section id from create sections
+                'Args'=>[
+                    'label_for'=>'cohort_8_example',
+                    'class'=>'example-class'
+            ]
+            ],
+            [
+                'id'=>'second_name',//get from createSettings
+                'title'=>'Second Name',
+                'callback'=> [$this->callbacks, 'cohort8SecondName'],
+                'page'=>'cohort_8',//menu slug
+                'section'=>'cohort_8_admin_index', //section id from create sections
+                'Args'=>[
+                    'label_for'=>'second_name',
+                    'class'=>'example-class'
+                ]
+            ]
+        ];
+
+        $this->settings->setFields($params);
+    }
 }
