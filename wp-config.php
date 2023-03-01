@@ -79,8 +79,11 @@ $table_prefix = 'ct_';
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
-define( 'WP_DEBUG', true );
+define( 'JWT_AUTH_CORS_ENABLE', true);
+define( 'WP_DEBUG', false );
 define( 'WP_DEBUG_LOG', true );
+
+define('JWT_AUTH_SECRET_KEY', 'ydgdggfd');
 
 /* Add any custom values between this line and the "stop editing" line. */
 

@@ -1,0 +1,37 @@
+### converting project to json
+
+GET http://localhost/customtheme/wp-json
+
+### Fetching ..........
+GET http://localhost/customtheme/wp-json/wp/v2
+
+### Fetch posts
+GET http://localhost/customtheme/wp-json/wp/v2/posts
+
+### Fetching one post
+GET http://localhost/customtheme/wp-json/wp/v2/posts/1
+
+
+### Fetching users
+GET http://localhost/customtheme/wp-json/wp/v2/users
+
+
+### Getting the Token
+POST http://localhost/customtheme/wp-json/jwt-auth/v1/token
+Content-Type: application/json
+
+{
+    "username":"admin",
+    "password":"admin"
+}
+
+### Create a post
+POST http://localhost/customtheme/wp-json/wp/v2/posts
+token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0L2N1c3RvbXRoZW1lIiwiaWF0IjoxNjc3NTczNzIzLCJuYmYiOjE2Nzc1NzM3MjMsImV4cCI6MTY3ODE3ODUyMywiZGF0YSI6eyJ1c2VyIjp7ImlkIjoiMSJ9fX0.GWqaAoWh-NF8kupuDJ7OcDwYRDlljfbrOlSEFm6dWWY
+
+{
+    "title":"Created using Rest API",
+    "content":"Body Created using Rest API",
+    "status":"publish"
+}
+

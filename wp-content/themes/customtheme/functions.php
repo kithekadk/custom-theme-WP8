@@ -189,3 +189,165 @@ add_shortcode('cohort8', function($atts){
     return 'Team Members ='.$attributes['team_members']. ' and Number Of Trainees =' .$attributes['number_of_trainees'];
 
 });
+
+//ADDING NEW LOGIN URL
+
+// function new_login_url($loginURL){
+//     $loginURL = site_url('cohort8.php', 'login');
+//     return $loginURL;
+// }
+
+// add_filter('login_url', 'new_login_url');\
+
+//LIMITING LOGIN ATTEMPTS
+
+function check_attempted_login($user, $username, $password){
+    if(get_transient('attempted_login')){
+        $datas = get_transient('attempted_login');
+
+        if ($datas['tried'] >= 3){
+            $until = get_option('_transient_timeout_' . 'attempted_login');
+            $time = time_to_go($until);
+
+            return new WP_Error('too_many_tried', sprintf(__('<strong>ERROR</strong>: You have reached authentication limit, please try after %1$s'), $time));
+        }
+    }
+
+    return $user;
+}
+
+add_filter('authenticate', 'check_attempted_login', 30, 3);
+
+function login_failed($username){
+    if (get_transient('attempted_login')){
+        $datas = get_transient('attempted_login');
+        $datas['tried']++;
+
+        if ($datas['tried'] <= 3)
+            set_transient('attempted_login', $datas, 300);
+        }else{
+            $datas = array(
+                'tried' => 1
+            );
+            set_transient ('attempted_login', $datas, 300);
+        }
+          
+    
+}
+
+add_action('wp_login_failed', 'login_failed', 10, 1);
+
+function time_to_go($timestamp){
+    //converting mysql timestamp to php time
+    $periods = array(
+        "second",
+        "minute",
+        "hour",
+        "day",
+        "week",
+        "month",
+        "year"
+    );
+
+    $lengths = array(
+        "60",
+        "60",
+        "24",
+        "7",
+        "4.35",
+        "12"
+    );
+
+    $current_timestamp = time();
+    $difference = abs($current_timestamp - $timestamp);
+
+    for ($i = 0; $difference >= $lengths[$i] && $i < count($lengths)-1; $i ++ ){
+        $difference /= $lengths[$i];
+    }
+
+    //adding the countdown if the remaining is less than a minute
+    $difference = round($difference);
+
+    if(isset($difference)){
+        if($difference != 1){
+            $periods[$i] .= "s";
+            $output = "$difference $periods[$i]";
+            return $output;
+        }
+    }
+}
+
+//CREATE CUSTOM FIELD REST API
+function custom_rest_api(){
+    register_rest_field('post', 'CustomFieldNew', ['get_callback'=> 'get_custom_field']);
+
+    register_rest_route(
+        'portfolioplugin/v1', 
+        'c8-portfolios', 
+        [
+            'callback'=>'get_c8_portfolios',
+            'method'=>'GET', 
+            'permission_callback'=>'custom_endpoint_permission',
+            'args'=>[
+                'meta_key'=>[
+                    'required'=>true,
+                    'default'=>'_edit_lock',
+                    'validate_callback'=>function($param, $request, $key){
+                        return !is_numeric($param);
+                    }
+                ],
+                'meta_value'=>[
+                    'required'=>true,
+                    'default'=>'1677654767:1',
+                    // 'validate_callback'=>function($param, $request, $key){
+                    //     return !is_numeric($param);
+                    // }
+                ]
+            ]
+        ]);
+}
+
+function custom_endpoint_permission(){
+    if(is_user_logged_in()){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+function get_c8_portfolios(WP_REST_Request $request){
+
+    // echo '<pre>'; print_r($request); '</pre>';
+
+    $meta_key = $request->get_param('meta_key');
+    $meta_value = $request->get_param('meta_value');
+
+    $args=[
+        'post_type'=>'portfolio',
+        'status'=>'publish',
+        'posts_per_page'=>10,
+        'meta_query'=>[[
+            'key'=>$meta_key,
+            'value'=>$meta_value
+        ]]
+    ];
+
+    $the_query = new WP_Query($args);
+
+    $portfolios = $the_query->posts;
+
+    return $portfolios;
+
+}
+
+function get_custom_field($obj){
+
+    $post_id = $obj['id'];
+
+    // echo 'pre';print_r($post_id); '</pre>';
+
+    return get_post_meta($post_id, 'CustomFieldNew', true);
+
+}
+
+add_action('rest_api_init', 'custom_rest_api');
