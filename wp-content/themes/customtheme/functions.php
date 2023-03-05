@@ -277,6 +277,10 @@ function time_to_go($timestamp){
     }
 }
 
+
+
+
+// =======================---------------------------===========================----------------------------======================
 //CREATE CUSTOM FIELD REST API
 function custom_rest_api(){
     register_rest_field('post', 'CustomFieldNew', ['get_callback'=> 'get_custom_field']);
@@ -291,21 +295,61 @@ function custom_rest_api(){
             'args'=>[
                 'meta_key'=>[
                     'required'=>true,
-                    'default'=>'_edit_lock',
+                    'default'=>'_edit_last',
                     'validate_callback'=>function($param, $request, $key){
                         return !is_numeric($param);
                     }
                 ],
                 'meta_value'=>[
                     'required'=>true,
-                    'default'=>'1677654767:1',
-                    // 'validate_callback'=>function($param, $request, $key){
-                    //     return !is_numeric($param);
-                    // }
+                    'default'=>1,
+                    'validate_callback'=>function($param, $request, $key){
+                        return is_numeric($param);
+                    }
                 ]
-            ]
+                ],
+                'schema'=>'custom_get_post_schema'
         ]);
 }
+
+
+function custom_get_post_schema(){
+    $schema = [
+        'schema'=>'',
+        'title'=>'all-portfolios',
+        'type'=> 'object',
+
+        'properties'=>[
+            'id'=>[
+                'description'=> esc_html__('Unique identifier for the object', 'my-textdomain'),
+                'type'=>'integer'
+            ],
+            'author'=>[
+                'description'=> esc_html__('The ID of the user object', 'my-textdomain'),
+                'type'=>'integer'
+            ],
+            'title'=>[
+                'description'=>esc_html__('The title of the object', 'my-textdomain'),
+                'type'=>'string'
+            ],
+            'content'=>[
+                'description'=>esc_html__('The content of the object', 'my-textdomain'),
+                'type'=>'string'
+            ],
+            'creation_date'=>[
+                'description'=>esc_html__('The date of creation of the object', 'my-textdomain'),
+                'type'=>'string'
+            ]
+        ]
+
+    ];
+
+    return $schema;
+}
+
+
+
+
 
 function custom_endpoint_permission(){
     if(is_user_logged_in()){
@@ -336,8 +380,65 @@ function get_c8_portfolios(WP_REST_Request $request){
 
     $portfolios = $the_query->posts;
 
-    return $portfolios;
+    if (empty($portfolios)){
+        return new WP_Error(
+            'no_data_found',
+            'No data found',
+            [
+                'status'=> 404
+            ]
+        );
+    }
 
+    foreach($portfolios as $portfolio){
+        $response = custom_rest_prepare_post($portfolio, $request);
+        $data[] = custom_prepare_for_collection($response);
+    }
+
+    return rest_ensure_response($data);
+
+}
+
+function custom_rest_prepare_post($post, $request){
+    $post_data = [];
+    $schema = custom_get_post_schema();
+
+    if(isset($schema['properties']['id'])){
+        $post_data['id'] = (int) $post->ID;
+    }
+
+    if(isset($schema['properties']['author'])){
+        $post_data['author'] = (int) $post->post_author;
+    }
+
+    if(isset($schema['properties']['title'])){
+        $post_data['title'] = apply_filters('post_heading', $post->post_title, $post);
+    }
+
+    if(isset($schema['properties']['content'])){
+        $post_data['content'] = apply_filters('post_text', $post->post_content, $post);
+    }
+
+    if(isset($schema['properties']['creation_date'])){
+        $post_data['creation_date']= apply_filters('post_date', $post->post_date, $post);
+    }
+
+    return rest_ensure_response($post_data);
+}
+
+function custom_prepare_for_collection($response){
+    if (!($response instanceof WP_REST_Response)){
+        return $response;
+    }
+
+    $data = (array) $response->get_data();
+    $links = rest_get_server()::get_compact_response_links($response);
+
+    if(!empty($links)){
+        $data['_links']= $links;
+    }
+
+    return $data;
 }
 
 function get_custom_field($obj){

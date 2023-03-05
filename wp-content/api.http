@@ -27,10 +27,11 @@ Content-Type: application/json
 
 ### Create a post
 POST http://localhost/customtheme/wp-json/wp/v2/posts
-token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0L2N1c3RvbXRoZW1lIiwiaWF0IjoxNjc3NTczNzIzLCJuYmYiOjE2Nzc1NzM3MjMsImV4cCI6MTY3ODE3ODUyMywiZGF0YSI6eyJ1c2VyIjp7ImlkIjoiMSJ9fX0.GWqaAoWh-NF8kupuDJ7OcDwYRDlljfbrOlSEFm6dWWY
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0L2N1c3RvbXRoZW1lIiwiaWF0IjoxNjc3NzQ5NzAyLCJuYmYiOjE2Nzc3NDk3MDIsImV4cCI6MTY3ODM1NDUwMiwiZGF0YSI6eyJ1c2VyIjp7ImlkIjoiMSJ9fX0.j_zSI9zAacd62SphoPYAM5SaIsqpWpbqkWlNHR00Vf8
 
 {
-    "title":"Created using Rest API",
+    "title":"Created using Rest API 3",
     "content":"Body Created using Rest API",
     "status":"publish"
 }

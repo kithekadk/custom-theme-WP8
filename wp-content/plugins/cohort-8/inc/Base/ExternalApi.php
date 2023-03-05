@@ -11,7 +11,7 @@
     }
 
     public function getDataApi(){
-        $url = 'https://jsonplaceholder.typicode.com/users';
+        $url = 'http://localhost/customtheme/wp-json/my-portfolios/v1/portfolios';
 
         $arguments = [
             'method'=>'GET'
@@ -19,29 +19,29 @@
 
         $response = wp_remote_get($url, $arguments);
 
-        if(200 == wp_remote_retrieve_response_code($response)){
-            $file_link = WP_PLUGIN_DIR.'/cohort-8/data.json';
+        // if(200 == wp_remote_retrieve_response_code($response)){
+        //     $file_link = WP_PLUGIN_DIR.'/cohort-8/data.json';
 
-            $message = wp_remote_retrieve_body($response);
+        //     $message = wp_remote_retrieve_body($response);
 
-            $this->write_to_file($message, $file_link);
-        }
-
-        if(200 !== wp_remote_retrieve_response_code($response) || is_wp_error($response)){
-            $file_link = WP_PLUGIN_DIR.'/cohort-8/error-log.txt';
-
-            $error_message = $response->get_error_message();
-
-            $error_message = date('d m Y g:i:a') . ' '.$error_message;
-
-            $this->write_to_file($error_message, $file_link);
-
-        }
-        
-        // if(is_wp_error($response)){
-        //     $error_message = $response->get_error_message();
-        //     return "Something went wrong: $error_message";
+        //     $this->write_to_file($message, $file_link);
         // }
+
+        // if(200 !== wp_remote_retrieve_response_code($response) || is_wp_error($response)){
+        //     $file_link = WP_PLUGIN_DIR.'/cohort-8/error-log.txt';
+
+        //     $error_message = $response->get_error_message();
+
+        //     $error_message = date('d m Y g:i:a') . ' '.$error_message;
+
+        //     $this->write_to_file($error_message, $file_link);
+
+        // }
+        
+        if(is_wp_error($response)){
+            $error_message = $response->get_error_message();
+            return "Something went wrong: $error_message";
+        }
 
         //prettify the json
         echo '<pre>';
@@ -54,7 +54,7 @@
         echo '</pre>';
         error_log(var_dump($users));
 
-
+return;
        
         $html = '';
         $html .= '<table>';
